@@ -3,14 +3,14 @@
 exports.handle = function handle(client) {
 
   const sayHello = client.createStep({
-    satisfied() {
+    satisfied: function() {
       return Boolean(client.getConversationState().helloSent)
     },
 
-    prompt() {
-      client.addTextResponse('Hello world!')
-      client.addTextResponse('I don\'t know much yet, but if you need some pointers on where to get started you should check out the docs – http://docs.init.ai/?key=c0fb-addc-119f')
-      client.addTextResponse('Otherwise, head over to Teach (up at the top) and start teaching me!')
+    prompt: function() {
+      client.addTextResponse('Hello world!');
+      client.addTextResponse('I don\'t know much yet, but if you need some pointers on where to get started you should check out the docs – http://docs.init.ai/?key=c0fb-addc-119f');
+      client.addTextResponse('Otherwise, head over to Teach (up at the top) and start teaching me!');
       client.updateConversationState({
         helloSent: true
       });
@@ -19,27 +19,50 @@ exports.handle = function handle(client) {
   });
 
   const untrained = client.createStep({
-    satisfied() {
-      return false
+    satisfied: function() {
+      return false;
     },
 
-    prompt() {
-      client.addTextResponse('Apologies, but this app needs to go back to school!')
-      client.done()
+    prompt: function() {
+      client.addTextResponse('Apologies, but this app needs to go back to school!');
+      client.done();
+    }
+  });
+
+  const handleGreeting = client.createStep({
+    satisfied: function() {
+      return false;
+    },
+
+    prompt: function() {
+      client.addTextResponse('Hello world, I mean human!');
+      client.done();
+    }
+  });
+
+  const handleGoodbye = client.createStep({
+    satisfied: function() {
+      return false;
+    },
+
+    prompt: function() {
+      client.addTextResponse('See you later!');
+      client.done();
     }
   });
 
   client.runFlow({
     classifications: {
 			// map inbound message classifications to names of streams
-    },
-    autoResponses: {
-      // configure responses to be automatically sent as predicted by the machine learning model
+      goodbye: 'goodbye',
+      greeting: 'greeting'
     },
     streams: {
+      greeting: handleGreeting,
+      goodbye: handleGoodbye,
       main: 'onboarding',
       onboarding: [sayHello],
       end: [untrained]
     }
-  })
+  });
 };
