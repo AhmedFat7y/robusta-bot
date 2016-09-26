@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 exports.handle = function handle(client) {
 
@@ -13,10 +13,10 @@ exports.handle = function handle(client) {
       client.addTextResponse('Otherwise, head over to Teach (up at the top) and start teaching me!')
       client.updateConversationState({
         helloSent: true
-      })
+      });
       client.done()
     }
-  })
+  });
 
   const untrained = client.createStep({
     satisfied() {
@@ -27,7 +27,7 @@ exports.handle = function handle(client) {
       client.addTextResponse('Apologies, but this app needs to go back to school!')
       client.done()
     }
-  })
+  });
 
   client.runFlow({
     classifications: {
@@ -42,4 +42,4 @@ exports.handle = function handle(client) {
       end: [untrained]
     }
   })
-}
+};
